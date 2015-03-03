@@ -1,0 +1,77 @@
+DirectoryIndex spink.php
+
+php_flag display_errors on
+php_value error_reporting 2048
+
+# редирект на модуль обработки и показа ошибок, при возникновении HTTP ошибок
+
+ErrorDocument 401 /error401.html
+ErrorDocument 403 /error403.html
+ErrorDocument 404 /error404.html
+ErrorDocument 500 /error500.html
+
+# включение mod_rewrite
+RewriteEngine on
+Options +FollowSymlinks
+RewriteBase /
+
+RewriteRule ^error404\.html$ spink.php?mod=information&page=error&code=404 [L]
+
+# контент
+RewriteRule ^index\.(html|htm|php)$ / [R=301,L]
+
+RewriteRule ^([a-z]+)$ /$1/ [R=301,L]
+RewriteRule ^([a-z]+)/([a-z_0-9]+)$ /$1/$2/ [R=301,L]
+RewriteRule ^([a-z]+)/([a-z_0-9]+)/([a-z_0-9]+)$ /$1/$2/$3/ [R=301,L]
+RewriteRule ^([a-z]+)/([a-z_0-9]+)/([a-z_0-9]+)/([a-z_0-9]+)$ /$1/$2/$3/$4/ [R=301,L]
+
+RewriteRule ^(flat|country|office|industry|retail)/$ spink.php?mod=realty&page=$1 [L]
+RewriteRule ^(flat|country|office|industry|retail)/(list)/$ spink.php?mod=realty&page=$1&action=$2 [L]
+RewriteRule ^(flat|country|office|industry|retail)/([0-9]+).html$ spink.php?mod=realty&page=$1&action=show&id=$2 [L]
+
+RewriteRule ^(pass|registration|change_password|login|logout|no_confirmation|cp|reg)/$ spink.php?mod=$1 [L]
+RewriteRule ^(change_email)/([A-Fa-f0-9]+)/$ spink.php?mod=$1&code=$2 [L]
+RewriteRule ^confirmation/$ spink.php?mod=confirmation [L]
+
+RewriteRule ^(pay|rates|help|support|contacts|assistant_agent|news)/$    spink.php?mod=information&page=$1 [L]
+RewriteRule ^(help|support|news)/([a-z_]+)/$             spink.php?mod=information&page=$1&action=$2 [L]
+RewriteRule ^(help|support|news)/([a-z_]+)/([a-z0-9]+)/$ spink.php?mod=information&page=$1&action=$2&id=$3 [L]
+RewriteRule ^(support)/([a-z_]+)/([a-z_]+)/$             spink.php?mod=information&page=$1&action=$2&load=$3 [L]
+RewriteRule ^(rate)/$                               /rates/ [R=301,L]
+RewriteRule ^(rate)/([a-z]+)/$                      spink.php?mod=information&page=$1&action=$2 [L]
+RewriteRule ^(rate)/([a-z]+)/([0-9]+)/$             spink.php?mod=information&page=$1&action=$2&month=$3 [L]
+
+RewriteRule ^(parsing)/(phones_cian|phones_afy)/$   spink.php?mod=$1&page=$2&action=load [L]
+RewriteRule ^(parsing)/(phones_cian|phones_afy)/([a-z]+)/$ spink.php?mod=$1&page=$2&action=$3 [L]
+RewriteRule ^(advertising)/(subscribe)/(sms|email)/$       spink.php?mod=$1&page=$2&type=$3&action=load [L]
+RewriteRule ^(advertising)/(subscribe)/(sms|email)/([a-z]+)/$   spink.php?mod=$1&page=$2&type=$3&action=$4 [L]
+
+RewriteRule ^/?$                                                             spink.php?setup=admin&mod=no [L]
+RewriteRule ^([a-z_]+)/$                                                     spink.php?setup=admin&mod=$1 [L]
+RewriteRule ^([a-z_]+)/([a-z_0-9]+)/$                                        spink.php?setup=admin&mod=$1&action=$2 [L]
+RewriteRule ^([a-z_]+)/([a-z_0-9]+)/([a-z_0-9]+)/$                           spink.php?setup=admin&mod=$1&action=$2&page=$3 [L]
+RewriteRule ^([a-z_]+)/([a-z_0-9]+)/([a-z_0-9]+)/([a-z_0-9]+)/$              spink.php?setup=admin&mod=$1&action=$2&page=$3&id=$4 [L]
+RewriteRule ^([a-z_]+)/([a-z_0-9]+)/([a-z_0-9]+)/([a-z_0-9]+)/([a-z_0-9]+)/$ spink.php?setup=admin&mod=$1&action=$2&page=$3&id=$4&load=$5 [L]
+
+RewriteRule ^([a-z_]+)/([a-z_0-9]+)/([a-z]?[0-9]+)/$                spink.php?mod=$1&action=$2&id=$3 [L]
+
+RewriteRule ^(css|js)/_g([a|o|p|r|s|w])_([a-z,0-9]+).(css|js)$          spink.php?setup=$1&type=$2&name=$3&mod=_graph [L]
+RewriteRule ^(css|js)/(a|o|p|r|s|w)_([a-z,0-9]+).(css|js)$              spink.php?setup=$1&type=$2&name=$3 [L]
+RewriteRule ^(css|js)/(a|o|p|r|s|w)_([a-z,0-9]+)_([a-z,0-9]+).(css|js)$ spink.php?setup=$1&type=$2&name=$3&action=$4 [L]
+
+#RewriteRule ^script/(.*)$ modules/admin/_graph/js/$1 [L]
+RewriteRule ^jquery/(.*)$   modules/_jquery/$1 [L]
+RewriteRule ^script/(.*)$   modules/_script/$1 [L]
+RewriteRule ^style/(.*)$    modules/_style/$1 [L]
+
+RewriteRule ^sitemap\.xml$ spink.php?mod=information&page=sitemap [L]
+
+# рисунки
+RewriteRule ^([a-z])([0-9]+)([a-z]).(jpg|jpeg|png|gif|bmp)$ spink.php?who=$1&number=$2&size=$3&type=$4 [L]
+# pdf
+RewriteRule ^([a-z]+)/([0-9]+).(pdf)$ spink.php?setup=pdf&mod=$1&action=$2&save [L]
+RewriteRule ^([a-z0-9_\.]+).(pdf)$ spink.php?setup=pdf&mod=prezentaciya&action=$2&save [L]
+# xml
+RewriteRule ^([a-f0-9]{24})\.(xml)$ spink.php?setup=xml&token=$1 [L]
+# realty 
+RewriteRule ^([0-9]{8})\.html$ spink.php?setup=realty&id=$1&mod=realty [L]
